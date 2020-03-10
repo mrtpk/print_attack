@@ -7,6 +7,7 @@ import numpy as numpy
 from stream import CameraStream
 from embedding import FaceEmbedder
 from face_detector import FaceDetector
+from face_recognition import FaceRecongizer
 from inference import AttackDetector
 
 if __name__ == "__main__":
@@ -18,6 +19,8 @@ if __name__ == "__main__":
 
     camera = CameraStream(0)
     face_detector = FaceDetector()
+    face_recognizer = FaceRecongizer()
+
     embedder = FaceEmbedder()
     attack_detector = AttackDetector()
 
@@ -40,6 +43,8 @@ if __name__ == "__main__":
             for x1, y1, x2, y2 in boxes:
                 crop = frame[y1:y2, x1:x2, :]
                 embedding = embedder.get_embedding(crop)
+                person_name = face_recognizer.predict(embedding=embedding, threshold=0.8, verbose=True)
+                # print("[INFO]: Detected person is {}".format(person_name))
                 is_attack = attack_detector.is_attack(embedding=embedding, threshold=0.5, verbose=True)
                 color = COLOR_ATTACK_LABEL[is_attack]
                 cv2.rectangle(render, (x1, y1), (x2, y2), color, 1)

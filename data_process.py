@@ -6,13 +6,22 @@ from embedding import FaceEmbedder
 import pickle
 from sklearn.model_selection import train_test_split
 
+def pickle_write(path, _list):
+    with open(path, 'wb') as fp:
+        pickle.dump(_list, fp)
+
+def pickle_read(path):
+    with open (path, 'rb') as fp:
+        _list = pickle.load(fp)
+    return _list
+
 def create_directory(_path):
     """
     Creates directory with :param _path
     """
     pathlib.Path(_path).mkdir(parents=True, exist_ok=True)
     
-def cvt_face_embeddings(embedder, root_dirs = ["./data/raw/ImposterFace/*", "./data/raw/ClientFace/*"]):
+def cvt_face_embeddings(embedder, root_dirs):
     """
     Converts images in the root directory to corresponding
     feature embedding preserving the folder structure.
@@ -33,30 +42,44 @@ def cvt_face_embeddings(embedder, root_dirs = ["./data/raw/ImposterFace/*", "./d
             # break
         # break
 
+def generate_dir_meta(root_dirs, ext="jpg"):
+    """
+    Generate inputs and label meta from folder
+    """
+    dict_label = {}
+    for root_dir in root_dirs:
+        dirs = list(glob(root_dir))
+        tmp = []
+        for _dir in dirs:
+            _dir_content = list(glob(_dir + "/*"))
+            _dir_name = _dir.split("/")[-1]
+            # print(_dir, _dir_content)
+            for i, _label_dir in enumerate(_dir_content):
+                # print(i, _label_dir)
+                dict_label[i] = _label_dir.split("/")[-1]
+                paths = list(glob(_label_dir + "/*.{}".format(ext)))
+                # print("paths", paths)
+                for path in paths:
+                    tmp.append([path, i])
+            pickle_write(path="{}/{}.pkl".format(root_dir.strip("*"), _dir_name), _list=tmp)
+    return dict_label
+
 def get_xy(label, x):
     _label = {"ClientFace": 0,
              "ImposterFace": 1}
-    prefix = "./data/processed/{}/".format(label)
+    prefix = "./data/print_attack/processed/{}/".format(label)
     x = x.split(" ")[0]
     x = x.replace(".jpg", ".npy").replace("\\", "/")
     return [prefix + x, _label[label]]
 
 def get_names_labels(label, operation):
-    dataset = {"ClientFace": './data/raw/client_{}_face.txt',
-               "ImposterFace": './data/raw/imposter_{}_face.txt'}
+    dataset = {"ClientFace": './data/print_attack/raw/client_{}_face.txt',
+               "ImposterFace": './data/print_attack/raw/imposter_{}_face.txt'}
     with open(dataset[label].format(operation)) as fp:
         lines = fp.read().splitlines()
         lines = list(map(lambda x : get_xy(label, x), lines))
     return lines
 
-def pickle_write(path, _list):
-    with open(path, 'wb') as fp:
-        pickle.dump(_list, fp)
-
-def pickle_read(path):
-    with open (path, 'rb') as fp:
-        _list = pickle.load(fp)
-    return _list
 
 def prepare_train_list():
     _train_lines = get_names_labels(label="ClientFace", operation="train")
@@ -64,7 +87,7 @@ def prepare_train_list():
     train_lines = get_names_labels(label="ImposterFace", operation="train")
     print("Training set contains {} real samples".format(len(train_lines)))
     _lines = train_lines + _train_lines
-    pickle_write("./data/processed/train.pkl", _lines)
+    pickle_write("./data/print_attack/processed/train.pkl", _lines)
     print("Training set contains {} samples".format(len(_lines)))
 
 def prepare_test_val_list():
@@ -72,13 +95,18 @@ def prepare_test_val_list():
     real_test, real_val = train_test_split(real_lines, test_size=0.40, random_state=42)
     fake_lines = get_names_labels(label="ImposterFace", operation="test")
     fake_test, fake_val = train_test_split(fake_lines, test_size=0.40, random_state=42)
-    pickle_write("./data/processed/valid.pkl", real_val + fake_val)
+    pickle_write("./data/print_attack/processed/valid.pkl", real_val + fake_val)
     print("Validation set has {} real and {} fake samples".format(len(real_val), len(fake_val)))
-    pickle_write("./data/processed/test.pkl", real_test + fake_test)
+    pickle_write("./data/print_attack/processed/test.pkl", real_test + fake_test)
     print("Test set has {} real and {} fake samples".format(len(real_test), len(fake_test)))    
 
 if __name__ == "__main__":
     # embedder = FaceEmbedder()
-    # cvt_face_embeddings(embedder)
-    prepare_train_list()
-    prepare_test_val_list()
+    # # Convert faces to embeddings for 2d attack
+    # cvt_face_embeddings(embedder, root_dirs = ["./data/print_attack/raw/ImposterFace/*", "./data/print_attack/raw/ClientFace/*"])
+    # # Prepare train, validation and test dataset for attack classfiers
+    # prepare_train_list()
+    # prepare_test_val_list()
+    # Convert faces to embeddings for face recognition
+    # cvt_face_embeddings(embedder, root_dirs = ["./data/image_recognition/raw/test/*", "./data/image_recognition/raw/train/*", "./data/image_recognition/raw/valid/*"])
+    print(generate_dir_meta(root_dirs=["./data/image_recognition/processed/*"], ext="npy"))

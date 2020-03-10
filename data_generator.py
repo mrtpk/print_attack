@@ -60,9 +60,9 @@ def load_all(records):
 
 if __name__ == "__main__":
     from data_process import pickle_read
-    train_set = pickle_read("./data/processed/train.pkl")
-    valid_set = pickle_read("./data/processed/valid.pkl")
-    test_set = pickle_read("./data/processed/test.pkl")
+    train_set = pickle_read("./data/print_attack/processed/train.pkl")
+    valid_set = pickle_read("./data/print_attack/processed/valid.pkl")
+    test_set = pickle_read("./data/print_attack/processed/test.pkl")
     # data generator usage
     gen_train = DataGenerator(dataset=train_set, batch_size=128, shuffle=True)
     gen_valid = DataGenerator(dataset=valid_set, batch_size=128, shuffle=True)

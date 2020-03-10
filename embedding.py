@@ -12,7 +12,7 @@ class FaceEmbedder():
     """
     A face embedder using FaceNet.
     """
-    def __init__(self, path_model='./data/models/facenet_keras.h5'):
+    def __init__(self, path_model='./data/models/facenet/facenet_keras.h5'):
         """
         Initialises embedder with FaceNet model.
         """
@@ -42,9 +42,9 @@ class FaceEmbedder():
 if __name__ == "__main__":
     embedder = FaceEmbedder()
     from scipy import spatial
-    img = cv2.imread("./data/raw/ClientFace/0001/0001_00_00_01_0.jpg")
+    img = cv2.imread("./data/print_attack/raw/ClientFace/0001/0001_00_00_01_0.jpg")
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-    img2 = cv2.imread("./data/raw/ImposterFace/0001/0001_00_00_01_0.jpg")
+    img2 = cv2.imread("./data/print_attack/raw/ImposterFace/0001/0001_00_00_01_0.jpg")
     img2 = cv2.cvtColor(img2, cv2.COLOR_BGR2RGB)
     result = 1 - spatial.distance.cosine(embedder.get_embedding(img), embedder.get_embedding(img2))
     print("Cosine similarity between real and fake is {}".format(result))

@@ -6,6 +6,8 @@ on face embeddings.
 from tensorflow.keras.models import Sequential, Model, load_model
 from tensorflow.keras.layers import Dense,Dropout,Softmax,Flatten,Activation,BatchNormalization
 
+# TODO: Add GMM and SVM classifier
+
 def get_classifier(name, load_pretrained):
     """
     Returns classifier
@@ -14,7 +16,7 @@ def get_classifier(name, load_pretrained):
     "tiny_2_layer" : get_tiny_2_layer,
     "2_layer_dense" : get_2_layer_dense
     }
-    path_save_model = "./data/models/classifier/{}.h5"
+    path_save_model = "./data/models/attack_classifier/{}.h5"
     if load_pretrained:
         return load_model(path_save_model.format(name))
     return AVAILABLE_CLASSIFIERS[name]()

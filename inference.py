@@ -49,7 +49,7 @@ class AttackDetector():
         Returns Precision, Recall and FScore of
         the attack detector on test data.
         """
-        test_set = pickle_read("./data/processed/test.pkl")
+        test_set = pickle_read("./data/print_attack/processed/test.pkl")
         x_test, y_test = load_all(test_set)
         preds = []
         for x in x_test:
