@@ -45,6 +45,9 @@ class DataGenerator(tf.keras.utils.Sequence):
             x.append(_x)
             y.append(_y)
         return np.array(x), np.array(y)
+    
+    def get_xy_set(self):
+        return self.convert(self.dataset)
 
 def load_all(records):
     """

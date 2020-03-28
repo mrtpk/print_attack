@@ -8,7 +8,7 @@ from data_process import pickle_read
 from data_generator import DataGenerator, load_all
 from classifier_models import get_classifier
 from sklearn.metrics import precision_recall_fscore_support
-
+# TODO: modify this detector to accomodate SVM and SVC with kmeans
 class AttackDetector():
     """
     To do detect attack by ensemble

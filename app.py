@@ -43,7 +43,7 @@ def detection_pipeline():
                 crop = frame[y1:y2, x1:x2, :]
                 embedding = embedder.get_embedding(crop)
                 person_name = face_recognizer.predict(embedding=embedding, threshold=0.8, verbose=True)
-                # print("[INFO]: Detected person is {}".format(person_name))
+                print("[INFO]: Detected person is {}".format(person_name))
                 is_attack = attack_detector.is_attack(embedding=embedding, threshold=0.5, verbose=True)
                 color = COLOR_ATTACK_LABEL[is_attack]
                 cv2.rectangle(render, (x1, y1), (x2, y2), color, 1)
@@ -143,4 +143,5 @@ def create_dataset():
                 cv2.imwrite(_full_path, _frame)
                 cv2.imwrite(_crop_path, _crop)
 if __name__ == "__main__":
-    create_dataset()
+    # create_dataset()
+    detection_pipeline()
