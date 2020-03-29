@@ -8,6 +8,7 @@ from data_process import pickle_read
 from data_generator import DataGenerator, load_all
 from classifier_models import get_classifier
 from sklearn.metrics import precision_recall_fscore_support
+from joblib import load
 # TODO: modify this detector to accomodate SVM and SVC with kmeans
 class AttackDetector():
     """
@@ -16,7 +17,9 @@ class AttackDetector():
     """
     def __init__(self):
         self.classifiers = ["tiny_2_layer", "2_layer_dense"] # which classifiers to use
-        self.weights = [1 , 1] # weights of each classifer
+        self.ml_model_names = ["svm_liner", "gmm_spherical", "logistic_regression"]
+        self.weights = [1 , 1, 1, 1, 1] # weights of each classifer
+        assert len(self.classifiers + self.ml_model_names) == len(self.weights)
         self.weights = np.array(self.weights)
         self.models = []
         self.init_models()
@@ -25,6 +28,14 @@ class AttackDetector():
         for name in self.classifiers:
             classifier = get_classifier(name=name, load_pretrained=True)
             self.models.append(classifier)
+
+        for name in self.ml_model_names:
+            classifier = self.get_ml_model(name)
+            self.models.append(classifier)
+
+    def get_ml_model(self, name):
+        path_save_model = "./data/models/{}_classifier/{}.joblib"
+        return load(path_save_model.format(name.split("_")[0], name))
 
     def is_attack(self, embedding, threshold=0.9, verbose=False):
         embedding = np.expand_dims(embedding, axis=0)

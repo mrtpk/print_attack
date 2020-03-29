@@ -42,8 +42,10 @@ def detection_pipeline():
             for x1, y1, x2, y2 in boxes:
                 crop = frame[y1:y2, x1:x2, :]
                 embedding = embedder.get_embedding(crop)
+                # TODO: Adjust this threshold 
                 person_name = face_recognizer.predict(embedding=embedding, threshold=0.8, verbose=True)
                 print("[INFO]: Detected person is {}".format(person_name))
+                # TODO: Adjust this threshold 
                 is_attack = attack_detector.is_attack(embedding=embedding, threshold=0.5, verbose=True)
                 color = COLOR_ATTACK_LABEL[is_attack]
                 cv2.rectangle(render, (x1, y1), (x2, y2), color, 1)
