@@ -10,7 +10,7 @@ import tensorflow as tf
 
 class FaceRecongizer():
     def __init__(self):
-        self.labels = {0: '0001', 1: '0002', 2: '0003', -1: 'unknown'}
+        self.labels = {0: 'ashwin', 1: 'tessa'} # TODO: change the labels
         self.load_pretrained = True
         self.path_save_model = "./data/models/face_recognizer/face_recognizer.h5"
         self.get_model()

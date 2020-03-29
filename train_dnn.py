@@ -21,15 +21,15 @@ if __name__ == "__main__":
     path_save_model = "./data/models/attack_classifier/{}.h5"
 
     # Load classifier
-    classifier_name = "tiny_2_layer"
+    classifier_name = "2_layer_dense" # "tiny_2_layer", "2_layer_dense"
     model = get_classifier(classifier_name, load_pretrained=True)
     model.summary()
-
+ 
     # Train with data generator
     gen_train = DataGenerator(dataset=train_set, batch_size=128, shuffle=True)
     gen_valid = DataGenerator(dataset=valid_set, batch_size=128, shuffle=True)
     gen_test = DataGenerator(dataset=test_set, batch_size=128)
-    history = model.fit_generator(epochs=3, generator=gen_train, validation_data=gen_valid)
+    history = model.fit_generator(epochs=100, generator=gen_train, validation_data=gen_valid)
     scores = model.evaluate_generator(gen_test, 128)
 
     # # Train without data generator 

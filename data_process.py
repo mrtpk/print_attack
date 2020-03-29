@@ -109,4 +109,7 @@ if __name__ == "__main__":
     # prepare_test_val_list()
     # Convert faces to embeddings for face recognition
     # cvt_face_embeddings(embedder, root_dirs = ["./data/image_recognition/raw/test/*", "./data/image_recognition/raw/train/*", "./data/image_recognition/raw/valid/*"])
-    print(generate_dir_meta(root_dirs=["./data/image_recognition/processed/*"], ext="npy"))
+    # print(generate_dir_meta(root_dirs=["./data/image_recognition/processed/*"], ext="npy"))
+    embedder = FaceEmbedder()
+    # Convert faces to embeddings for 2d attack
+    cvt_face_embeddings(embedder, root_dirs = ["./presentation_attack/data/collected_data/fake/crop/*"])

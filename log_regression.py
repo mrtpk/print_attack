@@ -26,7 +26,7 @@ if __name__ == "__main__":
     y_pred = clf.predict(x_test)
     print("Accuracy:",metrics.accuracy_score(y_test, y_pred))
     # clf.predict(np.expand_dims(x_test[0, :], axis=0))
-
+    print(path_save_model.format(name.split("_")[0], name))
     dump(clf, path_save_model.format(name.split("_")[0], name))
     clf_load = load(path_save_model.format(name.split("_")[0], name))
     y_pred = clf.predict(x_test)

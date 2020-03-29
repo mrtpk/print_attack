@@ -103,7 +103,7 @@ def create_dataset():
             # process frame
             _label = ""
             _frame = frame[..., ::-1]
-            _crop = frame[y1:y2, x1:x2, :]
+            _crop = _frame[y1:y2, x1:x2, :]
             print("[INFO]: Real or Fake?")
             print("Press `r` to label the face as real.")
             print("Press `f` to label the face as fake.")
