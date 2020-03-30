@@ -72,8 +72,8 @@ class FaceRecongizer():
             print("Person:", self.labels[np.argmax(pred, axis=-1)[0]])
             print("Is valid:", np.max(pred) > threshold)
         if np.max(pred) > threshold:
-            return self.labels[np.argmax(pred, axis=-1)[0]]
-        return self.labels[-1]
+            return self.labels[np.argmax(pred, axis=-1)[0]], np.max(pred) > threshold
+        return self.labels[-1], np.max(pred) > threshold
 
 if __name__ == "__main__":
     face_recognizer = FaceRecongizer()

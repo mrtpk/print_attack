@@ -51,7 +51,7 @@ class AttackDetector():
         weighted_preds = np.sum(weighted_preds) / np.sum(mask.astype(np.int8))
         weighted_preds = weighted_preds[0]
         if verbose:
-            print("Classfiers: ", self.classifiers)
+            print("Classfiers: ", self.classifiers + self.ml_model_names)
             print("Attack Probability:", preds)
             print("Weights:", self.weights)
             print("Mean Probability", weighted_preds)

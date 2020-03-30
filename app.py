@@ -42,15 +42,37 @@ def detection_pipeline():
             for x1, y1, x2, y2 in boxes:
                 crop = frame[y1:y2, x1:x2, :]
                 embedding = embedder.get_embedding(crop)
+                
                 # TODO: Adjust this threshold 
-                person_name = face_recognizer.predict(embedding=embedding, threshold=0.8, verbose=True)
+                person_name, is_valid = face_recognizer.predict(embedding=embedding, threshold=0.8, verbose=True)
                 print("[INFO]: Detected person is {}".format(person_name))
-                # TODO: Adjust this threshold 
-                is_attack = attack_detector.is_attack(embedding=embedding, threshold=0.75, verbose=True)
-                color = COLOR_ATTACK_LABEL[is_attack]
+                is_simple_render = False 
+                is_attack = False
+                face_color = 1
+                _label = "Unknown"
+                if is_simple_render:
+                    _label = "Attack"
+
+                if is_valid:
+                    # TODO: Adjust this threshold 
+                    is_attack = attack_detector.is_attack(embedding=embedding, threshold=0.75, verbose=True)
+                    is_attack = is_attack == 1
+                    face_color = 0
+                    _label = "{} | Valid".format(person_name.title())
+                    if is_attack:
+                        face_color = 1
+                        _label = "{} | Attack".format(person_name.title())
+                    if is_simple_render and is_attack:
+                        _label = "Attack"
+
+                color = COLOR_ATTACK_LABEL[face_color]
                 cv2.rectangle(render, (x1, y1), (x2, y2), color, 1)
+                render = cv2.flip(render, 1)
+                cv2.putText(render, _label, (render.shape[1] - x2, y1 - 10), cv2.FONT_HERSHEY_DUPLEX, 0.60, color)
+                render = cv2.flip(render, 1)
             
-            cv2.imshow("Presentation attack detection", cv2.flip(render, 1))
+            render = cv2.flip(render, 1)
+            cv2.imshow("Presentation attack detection", render)
             # wait till the user press another key
             key_pressed = cv2.waitKey(0)
 
