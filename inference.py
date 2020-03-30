@@ -18,7 +18,7 @@ class AttackDetector():
     def __init__(self):
         self.classifiers = ["tiny_2_layer", "2_layer_dense"] # which classifiers to use
         self.ml_model_names = ["svm_liner", "gmm_spherical", "logistic_regression"]
-        self.weights = [1 , 1, 1, 1, 1] # weights of each classifer
+        self.weights = [1 , 1, 1, 0, 1] # weights of each classifer
         assert len(self.classifiers + self.ml_model_names) == len(self.weights)
         self.weights = np.array(self.weights)
         self.models = []
@@ -47,12 +47,13 @@ class AttackDetector():
                 pred = pred[0]
             preds.append(pred)
         weighted_preds = np.array(preds) * self.weights
-        weighted_preds = np.mean(weighted_preds)
+        mask = np.array(self.weights) != 0
+        weighted_preds = np.sum(weighted_preds) / np.sum(mask.astype(np.int8))
         if verbose:
             print("Classfiers: ", self.classifiers)
             print("Attack Probability:", preds)
             print("Weights:", self.weights)
-            print("Mean weight", weighted_preds)
+            print("Mean Probability", weighted_preds)
             print("Is attack:", weighted_preds > threshold)
         if weighted_preds > threshold:
             return 1 # attack confirmed
