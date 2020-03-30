@@ -42,7 +42,10 @@ class AttackDetector():
         preds = []
         for model in self.models:
             pred = model.predict(embedding)
-            preds.append(pred[0][0])
+            pred = pred[0]
+            if type(pred) == list:
+                pred = pred[0]
+            preds.append(pred)
         weighted_preds = np.array(preds) * self.weights
         weighted_preds = np.mean(weighted_preds)
         if verbose:
